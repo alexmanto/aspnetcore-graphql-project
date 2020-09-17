@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using GraphiQl;
 using GraphQL;
+using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +10,9 @@ using Microsoft.Extensions.Hosting;
 using RealEstateManager.DataAccess.Repositories;
 using RealEstateManager.DataAccess.Repositories.Contracts;
 using RealEstateManager.Database;
+using RealEstateManager.Types;
+using RealEstateManager.WebApi.Queries;
+using RealEstateManager.WebApi.Schema;
 
 namespace RealEstateManager.WebApi
 {
@@ -33,7 +33,14 @@ namespace RealEstateManager.WebApi
             services.AddTransient<IPropertyRepository, PropertyRepository>();
 
             services.AddDbContext<RealEstateContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:RealEstateDb"]));
+            //services.AddMemoryCache();
+
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
+            services.AddTransient<PropertyQuery>();
+            services.AddSingleton<PropertyType>();
+
+            var sp = services.BuildServiceProvider();
+            services.AddSingleton<ISchema>(new RealEstateSchema(new FuncServiceProvider(type => sp.GetService(type))));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +57,8 @@ namespace RealEstateManager.WebApi
                 app.UseHsts();
             }
 
+            app.UseGraphiQl();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -61,7 +70,7 @@ namespace RealEstateManager.WebApi
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapRazorPages();
+                endpoints.MapControllers();
             });
         }
     }

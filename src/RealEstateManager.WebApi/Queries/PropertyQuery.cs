@@ -1,16 +1,16 @@
 ﻿using GraphQL.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using RealEstateManager.DataAccess.Repositories.Contracts;
+using RealEstateManager.Types;
 
 namespace RealEstateManager.WebApi.Queries
 {
     public class PropertyQuery : ObjectGraphType
     {
-        public PropertyQuery() 
+        public PropertyQuery(IPropertyRepository propertyRepository) 
         {
-
+            Field<ListGraphType<PropertyType>>(
+                "properties",
+                resolve: context => propertyRepository.GetAll());
         }
     }
 }
