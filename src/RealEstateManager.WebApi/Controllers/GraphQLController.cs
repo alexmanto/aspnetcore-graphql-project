@@ -4,8 +4,6 @@ using GraphQL.Types;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateManager.Utilities.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace RealEstateManager.Controllers

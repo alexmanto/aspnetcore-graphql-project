@@ -11,6 +11,7 @@ using RealEstateManager.DataAccess.Repositories;
 using RealEstateManager.DataAccess.Repositories.Contracts;
 using RealEstateManager.Database;
 using RealEstateManager.Types;
+using RealEstateManager.Types.Payment;
 using RealEstateManager.WebApi.Queries;
 using RealEstateManager.WebApi.Schema;
 
@@ -31,13 +32,14 @@ namespace RealEstateManager.WebApi
             services.AddControllers();
 
             services.AddTransient<IPropertyRepository, PropertyRepository>();
+            services.AddTransient<IPaymentRepository, PaymentRepository>();
 
             services.AddDbContext<RealEstateContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:RealEstateDb"]));
-            //services.AddMemoryCache();
 
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services.AddTransient<PropertyQuery>();
-            services.AddSingleton<PropertyType>();
+            services.AddSingleton<PaymentType>();
+            services.AddTransient<PropertyType>();
 
             var sp = services.BuildServiceProvider();
             services.AddSingleton<ISchema>(new RealEstateSchema(new FuncServiceProvider(type => sp.GetService(type))));
