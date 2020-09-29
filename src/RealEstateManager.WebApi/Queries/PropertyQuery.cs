@@ -1,4 +1,5 @@
-﻿using GraphQL.Types;
+﻿using GraphQL;
+using GraphQL.Types;
 using RealEstateManager.DataAccess.Repositories.Contracts;
 using RealEstateManager.Types;
 
@@ -11,6 +12,11 @@ namespace RealEstateManager.WebApi.Queries
             Field<ListGraphType<PropertyType>>(
                 "properties",
                 resolve: context => propertyRepository.GetAll());
+
+            Field<PropertyType>(
+                "property",
+                arguments: new QueryArguments(new QueryArgument<IntGraphType> { Name = "id" }),
+                resolve: context => propertyRepository.GetById(context.GetArgument<int>("id")));
         }
     }
 }
