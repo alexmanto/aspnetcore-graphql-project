@@ -27,6 +27,7 @@ namespace RealEstateManager.Controllers
                 throw new ArgumentNullException(nameof(query));
 
             var inputs = query.Variables?.ToInputs();
+
             var executionOptions = new ExecutionOptions
             {
                 Schema = _schema,

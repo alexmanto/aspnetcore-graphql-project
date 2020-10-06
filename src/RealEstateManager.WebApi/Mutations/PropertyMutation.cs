@@ -11,7 +11,7 @@ namespace RealEstateManager.WebApi.Mutations
     {
         public PropertyMutation(IPropertyRepository propertyRepository)
         {
-            //Name = "AddPropertyMutation";
+            Name = "AddPropertyMutation";
 
             Field<PropertyType>(
                 "addProperty",

@@ -10,7 +10,7 @@ namespace RealEstateManager.WebApi.Schema
         public RealEstateSchema(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             Query = serviceProvider.GetRequiredService<PropertyQuery>();
-            //Mutation = serviceProvider.GetRequiredService<PropertyMutation>();
+            Mutation = serviceProvider.GetRequiredService<PropertyMutation>();
         }
     }
 }

@@ -3,10 +3,12 @@ using GraphQL;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using RealEstateManager.DataAccess.Repositories;
 using RealEstateManager.DataAccess.Repositories.Contracts;
 using RealEstateManager.Database;
@@ -31,7 +33,10 @@ namespace RealEstateManager.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.
+                AddMvc(option => option.EnableEndpointRouting = false)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
             services.AddTransient<IPropertyRepository, PropertyRepository>();
             services.AddTransient<IPaymentRepository, PaymentRepository>();
@@ -40,16 +45,13 @@ namespace RealEstateManager.WebApi
 
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services.AddTransient<PropertyQuery>();
-            //services.AddTransient<PropertyMutation>();
+            services.AddTransient<PropertyMutation>();
             services.AddTransient<PropertyType>();
-            //services.AddTransient<PropertyInputType>();
+            services.AddTransient<PropertyInputType>();
 
             services.AddSingleton<PaymentType>();
 
-            var sp = services.BuildServiceProvider();
-            services.AddSingleton<ISchema>(new RealEstateSchema(new FuncServiceProvider(type => sp.GetService(type))));
-
-            //services.AddSingleton<ISchema>(new RealEstateSchema(services.BuildServiceProvider()));
+            services.AddSingleton<ISchema>(new RealEstateSchema(services.BuildServiceProvider()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,12 +74,12 @@ namespace RealEstateManager.WebApi
 
             app.UseRouting();
 
-            db.EnsureSeedData();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            db.EnsureSeedData();
         }
     }
 }
