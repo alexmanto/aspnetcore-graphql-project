@@ -1,12 +1,11 @@
 ﻿using GraphQL;
 using GraphQL.Types;
 using RealEstateManager.DataAccess.Repositories.Contracts;
-using RealEstateManager.Database.Models;
 using RealEstateManager.Types.Payment;
 
 namespace RealEstateManager.Types
 {
-    public class PropertyType : ObjectGraphType<Property>
+    public class PropertyType : ObjectGraphType<Database.Models.Property>
     {
         public PropertyType(IPaymentRepository paymentRepository)
         {

@@ -12,6 +12,8 @@ using RealEstateManager.DataAccess.Repositories.Contracts;
 using RealEstateManager.Database;
 using RealEstateManager.Types;
 using RealEstateManager.Types.Payment;
+using RealEstateManager.Types.Property;
+using RealEstateManager.WebApi.Mutations;
 using RealEstateManager.WebApi.Queries;
 using RealEstateManager.WebApi.Schema;
 
@@ -38,11 +40,16 @@ namespace RealEstateManager.WebApi
 
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services.AddTransient<PropertyQuery>();
-            services.AddSingleton<PaymentType>();
+            //services.AddTransient<PropertyMutation>();
             services.AddTransient<PropertyType>();
+            //services.AddTransient<PropertyInputType>();
+
+            services.AddSingleton<PaymentType>();
 
             var sp = services.BuildServiceProvider();
             services.AddSingleton<ISchema>(new RealEstateSchema(new FuncServiceProvider(type => sp.GetService(type))));
+
+            //services.AddSingleton<ISchema>(new RealEstateSchema(services.BuildServiceProvider()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,11 +69,8 @@ namespace RealEstateManager.WebApi
             app.UseGraphiQl();
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
 
             app.UseRouting();
-
-            app.UseAuthorization();
 
             db.EnsureSeedData();
 
